@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" href="path/to/fav.png" />
+    <title>chc</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      const HOST = "http://localhost:443";
+
+      fetch(HOST + "/ass")
+        .then((response) => response.json())
+        .then((data) => console.log(data));
+
+      function renderComment(post) {
+        const { tag, tags, text, time } = post;
+        console.log(post);
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const title = document.createElement("p");
+        title.className = "card-title font-size-14";
+
+        const id = document.createElement("a");
+        id.innerText = tag;
+        // TODO: onclick remove everything from #comments and re-render
+        id.href = "#";
+
+        const comment = document.createElement("p");
+        comment.innerHTML = text;
+
+        const footer = document.createElement("span");
+        footer.className = "text-muted";
+        footer.innerText = time;
+
+        card.appendChild(title);
+        title.appendChild(id);
+        card.appendChild(comment);
+        card.appendChild(footer);
+
+        document.querySelector("#comments").appendChild(card);
+      }
+
+      window.onload = function () {
+        const params = new URLSearchParams(window.location.search);
+        const tag = params.get("tag") || "home";
+        fetch(HOST + "/" + tag)
+          .then((response) => response.json())
+          .then((data) => data.forEach(renderComment));
+      };
+    </script>
+  </head>
+  <body data-set-preferred-mode-onload="true">
+    <div class="page-wrapper with-navbar">
+      <nav class="navbar">
+        <div class="navbar-brand">chc</div>
+        <form class="form-inline ml-auto" action="..." method="...">
+          <!-- d-none = display: none, d-md-flex = display: flex on medium screens and up (width > 768px), ml-auto = margin-left: auto -->
+          <input type="text" class="form-control" required="required" />
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+      </nav>
+      <div class="content-wrapper">
+        <div class="container-fluid">
+          <div class="content">
+            <div class="form-group">
+              <label for="comment">Comment</label>
+              <textarea class="form-control" id="comment"></textarea>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Submit" />
+          </div>
+          <div id="comments"></div>
+          <div class="content">
+            <form class="form-inline">
+              <!-- d-none = display: none, d-md-flex = display: flex on medium screens and up (width > 768px), ml-auto = margin-left: auto -->
+              <input type="text" class="form-control" />
+              <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/js/halfmoon.min.js"></script>
+  </body>
+</html>
