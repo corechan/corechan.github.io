@@ -24,6 +24,7 @@
       const POSTS_ID = "#posts";
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
+      const POST_TAG_LENGTH = 32;
       let TAG = "";
 
       function humanize(s) {
@@ -43,6 +44,14 @@
         }
         t /= 24;
         return `${Math.floor(t)}d`;
+      }
+
+      function parseTag(s) {
+        const tag = s.match(/[a-zA-Z0-9]+/i)[0];
+        if (tag.length == POST_TAG_LENGTH) {
+          return { tag, pretty: `@${tag}`, isPost: true };
+        }
+        return { tag, pretty: `#${tag}`, isPost: false };
       }
 
       /**
@@ -127,8 +136,10 @@
 
       function updateTagChildren(tag) {
         // TODO: #/@ formatting
-        document.querySelector(SEARCH_ID).value = `#${tag}`;
-        document.querySelector(COMMENT_ID).placeholder = `Replying to #${tag}`;
+        document.querySelector(SEARCH_ID).value = parseTag(tag).pretty;
+        document.querySelector(COMMENT_ID).placeholder = `Replying to ${
+          parseTag(tag).pretty
+        }`;
 
         clearCards();
         fetch(HOST + "/children/" + tag)
