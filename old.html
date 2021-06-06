@@ -58,28 +58,46 @@
   <body data-set-preferred-mode-onload="true">
     <div class="page-wrapper with-navbar">
       <nav class="navbar">
-        <div class="navbar-brand">chc</div>
-        <form class="form-inline ml-auto" action="..." method="...">
-          <!-- d-none = display: none, d-md-flex = display: flex on medium screens and up (width > 768px), ml-auto = margin-left: auto -->
-          <input type="text" class="form-control" required="required" />
+        <form class="form-inline m-auto">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search tchan.art"
+          />
           <button class="btn btn-primary" type="submit">Search</button>
         </form>
       </nav>
       <div class="content-wrapper">
-        <div class="container-fluid">
+        <div class="container">
           <div class="content">
             <div class="form-group">
-              <label for="comment">Comment</label>
-              <textarea class="form-control" id="comment"></textarea>
+              <textarea
+                class="form-control"
+                id="comment"
+                placeholder="What are your thoughts?"
+              ></textarea>
             </div>
-            <input class="btn btn-primary" type="submit" value="Submit" />
+            <input class="btn btn-primary" type="submit" value="Post" />
           </div>
-          <div id="comments"></div>
+          <div id="comments">
+            <div class="card">
+              <p class="card-title font-size-14">
+                <a href="#">@acc07ed24d5a4ec9ea389577ff772231</a>
+              </p>
+              <p>
+                In publishing and graphic design, Lorem ipsum is a placeholder
+                text commonly used to demonstrate the
+                <a href="#">#visual</a> form of a document or a typeface without
+                relying on meaningful content. Lorem ipsum may be used as a
+                placeholder before final <a href="#">#copy</a> is available.
+              </p>
+              <span class="text-muted">2006-01-02T15:04:05Z07:00</span>
+            </div>
+          </div>
           <div class="content">
-            <form class="form-inline">
-              <!-- d-none = display: none, d-md-flex = display: flex on medium screens and up (width > 768px), ml-auto = margin-left: auto -->
-              <input type="text" class="form-control" />
-              <button class="btn btn-primary" type="submit">Search</button>
+            <form class="form-inline m-auto">
+              <input type="text" class="form-control" placeholder="Host" />
+              <button class="btn btn-primary" type="submit">Change host</button>
             </form>
           </div>
         </div>
