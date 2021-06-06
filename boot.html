@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+    />
+    <title>Hello, world!</title>
+    <style>
+      a {
+        text-decoration: none;
+      }
+    </style>
+    <script>
+      const HOST = "http://localhost:443";
+
+      function renderCard(post) {
+        const card = document.createElement("div");
+        card.className = "card mt-3 mb-3";
+
+        const body = document.createElement("div");
+        body.className = "card-body";
+
+        const title = document.createElement("p");
+        title.className = "card-title text-muted mb-3";
+        title.innerHTML = `@${post.PostTag} &middot; ${post.Time}`;
+
+        const text = document.createElement("p");
+        text.innerHTML = post.Text;
+
+        const link = document.createElement("a");
+        link.href = "#";
+        link.className = "card-link";
+        link.innerHTML = `<i class="bi bi-chat"></i> ${post.ReplyCount}`;
+
+        card.appendChild(body);
+        body.appendChild(title);
+        body.appendChild(text);
+        body.appendChild(link);
+
+        document.querySelector("#posts").appendChild(card);
+      }
+
+      window.onload = function () {
+        const params = new URLSearchParams(window.location.search);
+        const tag = params.get("tag") || "home";
+        fetch(HOST + "/children/" + tag)
+          .then((response) => response.json())
+          .then((data) => data.forEach(renderCard));
+      };
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
+      <div class="container">
+        <div class="input-group">
+          <input
+            class="form-control"
+            type="search"
+            placeholder="Search tchan.art"
+          />
+          <button class="btn btn-outline-secondary">Search</button>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <textarea class="form-control mt-3 mb-2"></textarea>
+      <button class="btn btn-primary">Post</button>
+      <div id="posts">
+        <div class="card mt-3 mb-3">
+          <div class="card-body">
+            <p class="card-title text-muted mb-3">
+              @acc07ed24d5a4ec9ea389577ff772231 &middot; 5h
+            </p>
+            <p class="card-text">
+              In publishing and <a href="#">#GraphicDesign</a>, Lorem ipsum is a
+              placeholder text commonly used to demonstrate the
+              <a href="#">#visual</a> form of a document or a typeface without
+              relying on meaningful content. Lorem ipsum may be used as a
+              placeholder before final <a href="#">#copy</a> is available.
+            </p>
+            <a href="#" class="card-link"><i class="bi bi-chat"></i> 7</a>
+          </div>
+        </div>
+        <div class="card mt-3 mb-3">
+          <div class="card-body">
+            <p class="card-title text-muted mb-3">
+              @acc07ed24d5a4ec9ea389577ff772231 &middot; 5h
+            </p>
+            <p class="card-text">
+              In publishing and <a href="#">#GraphicDesign</a>, Lorem ipsum is a
+              placeholder text commonly used to demonstrate the
+              <a href="#">#visual</a> form of a document or a typeface without
+              relying on meaningful content. Lorem ipsum may be used as a
+              placeholder before final <a href="#">#copy</a> is available.
+            </p>
+            <a href="#" class="card-link"><i class="bi bi-chat"></i> 7</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
