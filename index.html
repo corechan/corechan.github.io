@@ -21,6 +21,36 @@
     </style>
     <script>
       const HOST = "http://localhost:443";
+      const POSTS_ID = "#posts";
+
+      function updateTag(tag) {
+        console.log("updateTag", tag);
+        updateTagChildren(tag);
+      }
+
+      function clearCards() {
+        document.querySelector(POSTS_ID).innerHTML = "";
+      }
+
+      function postComment(postParentTag) {
+        const text = document.querySelector("#comment").value;
+        console.log("postComment", text);
+
+        fetch(HOST, {
+          method: "POST",
+          body: JSON.stringify({
+            ParentPostTag: "",
+            SearchTags: [getCurrentTag()],
+            Text: text,
+          }),
+        });
+      }
+
+      function searchTag() {
+        const tag = document.querySelector("#search").value;
+        console.log("searchTag", tag);
+        updateTagChildren(tag);
+      }
 
       function renderCard(post) {
         const card = document.createElement("div");
@@ -37,7 +67,7 @@
         text.innerHTML = post.Text;
 
         const link = document.createElement("a");
-        link.href = "#";
+        link.href = `javascript:updateTag("${post.PostTag}")`;
         link.className = "card-link";
         link.innerHTML = `<i class="bi bi-chat"></i> ${post.ReplyCount}`;
 
@@ -46,15 +76,24 @@
         body.appendChild(text);
         body.appendChild(link);
 
-        document.querySelector("#posts").appendChild(card);
+        document.querySelector(POSTS_ID).appendChild(card);
       }
 
-      window.onload = function () {
-        const params = new URLSearchParams(window.location.search);
-        const tag = params.get("tag") || "home";
+      function updateTagChildren(tag) {
+        clearCards();
         fetch(HOST + "/children/" + tag)
           .then((response) => response.json())
           .then((data) => data.forEach(renderCard));
+      }
+
+      function getCurrentTag() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("tag") || "home";
+      }
+
+      window.onload = function () {
+        const tag = getCurrentTag();
+        updateTagChildren(tag);
       };
     </script>
   </head>
@@ -66,14 +105,22 @@
             class="form-control"
             type="search"
             placeholder="Search tchan.art"
+            id="search"
           />
-          <button class="btn btn-outline-secondary">Search</button>
+          <button
+            class="btn btn-outline-secondary"
+            onclick="javascrip:searchTag()"
+          >
+            Search
+          </button>
         </div>
       </div>
     </nav>
     <div class="container">
-      <textarea class="form-control mt-3 mb-2"></textarea>
-      <button class="btn btn-primary">Post</button>
+      <textarea class="form-control mt-3 mb-2" id="comment"></textarea>
+      <button class="btn btn-primary" onclick="javascript:postComment()">
+        Post
+      </button>
       <div id="posts">
         <div class="card mt-3 mb-3">
           <div class="card-body">
@@ -87,22 +134,9 @@
               relying on meaningful content. Lorem ipsum may be used as a
               placeholder before final <a href="#">#copy</a> is available.
             </p>
-            <a href="#" class="card-link"><i class="bi bi-chat"></i> 7</a>
-          </div>
-        </div>
-        <div class="card mt-3 mb-3">
-          <div class="card-body">
-            <p class="card-title text-muted mb-3">
-              @acc07ed24d5a4ec9ea389577ff772231 &middot; 5h
-            </p>
-            <p class="card-text">
-              In publishing and <a href="#">#GraphicDesign</a>, Lorem ipsum is a
-              placeholder text commonly used to demonstrate the
-              <a href="#">#visual</a> form of a document or a typeface without
-              relying on meaningful content. Lorem ipsum may be used as a
-              placeholder before final <a href="#">#copy</a> is available.
-            </p>
-            <a href="#" class="card-link"><i class="bi bi-chat"></i> 7</a>
+            <a href="javascript:updateTag(123)" class="card-link"
+              ><i class="bi bi-chat"></i> 7</a
+            >
           </div>
         </div>
       </div>
