@@ -24,6 +24,7 @@
       const POSTS_ID = "#posts";
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
+      let TAG = "";
 
       function humanize(s) {
         const date = Date.parse(s);
@@ -51,7 +52,7 @@
         return s.replaceAll(
           /[#@][a-zA-Z0-9]+/gi,
           (match) =>
-            `<a href="javascript:updateTagChildren('${match.substr(
+            `<a href="javascript:setTagParam('${match.substr(
               1
             )}')">${match}</a>`
         );
@@ -102,7 +103,7 @@
         text.innerHTML = processText(post.Text);
 
         const link = document.createElement("a");
-        link.href = `javascript:updateTag('${post.PostTag}')`;
+        link.href = `javascript:setTagParam('${post.PostTag}')`;
         link.className = "card-link";
         link.innerHTML = `<i class="bi bi-chat me-2"></i>${post.ReplyCount}`;
 
@@ -114,12 +115,20 @@
         document.querySelector(POSTS_ID).appendChild(card);
       }
 
+      function setSearchParam(k, v) {
+        const params = new URLSearchParams(window.location.search);
+        params.set(k, v);
+        window.location.search = params;
+      }
+
+      function setTagParam(tag) {
+        setSearchParam("tag", tag);
+      }
+
       function updateTagChildren(tag) {
         // TODO: #/@ formatting
         document.querySelector(SEARCH_ID).value = `#${tag}`;
         document.querySelector(COMMENT_ID).placeholder = `Replying to #${tag}`;
-
-        // TODO: Update search param
 
         clearCards();
         fetch(HOST + "/children/" + tag)
@@ -132,7 +141,21 @@
         return params.get("tag") || "home";
       }
 
+      /*
+
+      rendering:
+      - updates to screen happen through search params
+
+      i.e. when updating tag, just update search param, which triggers onload
+
+
+      render:
+      1. get tag
+
+      */
+
       window.onload = function () {
+        console.log("onload");
         const tag = getCurrentTag();
         updateTagChildren(tag);
       };
