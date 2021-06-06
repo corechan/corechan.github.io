@@ -13,7 +13,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
     />
-    <title>Hello, world!</title>
+    <title>Corechan</title>
     <style>
       a {
         text-decoration: none;
@@ -22,6 +22,8 @@
     <script>
       const HOST = "http://localhost:443";
       const POSTS_ID = "#posts";
+      const SEARCH_ID = "#search";
+      const COMMENT_ID = "#comment";
 
       function humanize(s) {
         const date = Date.parse(s);
@@ -48,7 +50,10 @@
       function processText(s) {
         return s.replaceAll(
           /[#@][a-zA-Z0-9]+/gi,
-          (match) => `<a href="#">${match}</a>`
+          (match) =>
+            `<a href="javascript:updateTagChildren('${match.substr(
+              1
+            )}')">${match}</a>`
         );
       }
 
@@ -62,7 +67,7 @@
       }
 
       function postComment(postParentTag) {
-        const text = document.querySelector("#comment").value;
+        const text = document.querySelector(COMMENT_ID).value;
         console.log("postComment", text);
 
         fetch(HOST, {
@@ -76,7 +81,7 @@
       }
 
       function searchTag() {
-        const tag = document.querySelector("#search").value;
+        const tag = document.querySelector(SEARCH_ID).value;
         console.log("searchTag", tag);
         updateTagChildren(tag);
       }
@@ -97,7 +102,7 @@
         text.innerHTML = processText(post.Text);
 
         const link = document.createElement("a");
-        link.href = `javascript:updateTag("${post.PostTag}")`;
+        link.href = `javascript:updateTag('${post.PostTag}')`;
         link.className = "card-link";
         link.innerHTML = `<i class="bi bi-chat me-2"></i>${post.ReplyCount}`;
 
@@ -110,6 +115,12 @@
       }
 
       function updateTagChildren(tag) {
+        // TODO: #/@ formatting
+        document.querySelector(SEARCH_ID).value = `#${tag}`;
+        document.querySelector(COMMENT_ID).placeholder = `Replying to #${tag}`;
+
+        // TODO: Update search param
+
         clearCards();
         fetch(HOST + "/children/" + tag)
           .then((response) => response.json())
@@ -135,7 +146,7 @@
             <input
               class="form-control"
               type="search"
-              placeholder="Search tchan.art"
+              placeholder="Search"
               id="search"
             />
           </div>
@@ -145,14 +156,6 @@
               onclick="javascrip:searchTag()"
             >
               Search
-            </button>
-          </div>
-          <div class="col-auto">
-            <button
-              class="btn btn-outline-secondary"
-              onclick="javascrip:searchTag()"
-            >
-              <i class="bi bi-gear"></i>
             </button>
           </div>
         </div>
