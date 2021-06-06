@@ -87,7 +87,7 @@
             SearchTags: [getCurrentTag()],
             Text: text,
           }),
-        });
+        }).then((response) => window.location.reload());
       }
 
       function searchTag() {
