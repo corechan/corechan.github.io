@@ -23,6 +23,35 @@
       const HOST = "http://localhost:443";
       const POSTS_ID = "#posts";
 
+      function humanize(s) {
+        const date = Date.parse(s);
+        let t = Date.now() - date;
+        t /= 1000;
+        if (t < 60) {
+          return "now";
+        }
+        t /= 60;
+        if (t < 60) {
+          return `${Math.floor(t)}m`;
+        }
+        t /= 60;
+        if (t < 60) {
+          return `${Math.floor(t)}h`;
+        }
+        t /= 24;
+        return `${Math.floor(t)}d`;
+      }
+
+      /**
+       * Add links to tags.
+       */
+      function processText(s) {
+        return s.replaceAll(
+          /[#@][a-zA-Z0-9]+/gi,
+          (match) => `<a href="#">${match}</a>`
+        );
+      }
+
       function updateTag(tag) {
         console.log("updateTag", tag);
         updateTagChildren(tag);
@@ -61,15 +90,16 @@
 
         const title = document.createElement("p");
         title.className = "card-title text-muted mb-3";
-        title.innerHTML = `@${post.PostTag} &middot; ${post.Time}`;
+        // TODO: <time>
+        title.innerHTML = `@${post.PostTag} &middot; ${humanize(post.Time)}`;
 
         const text = document.createElement("p");
-        text.innerHTML = post.Text;
+        text.innerHTML = processText(post.Text);
 
         const link = document.createElement("a");
         link.href = `javascript:updateTag("${post.PostTag}")`;
         link.className = "card-link";
-        link.innerHTML = `<i class="bi bi-chat"></i> ${post.ReplyCount}`;
+        link.innerHTML = `<i class="bi bi-chat me-2"></i>${post.ReplyCount}`;
 
         card.appendChild(body);
         body.appendChild(title);
@@ -100,19 +130,31 @@
   <body>
     <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
       <div class="container">
-        <div class="input-group">
-          <input
-            class="form-control"
-            type="search"
-            placeholder="Search tchan.art"
-            id="search"
-          />
-          <button
-            class="btn btn-outline-secondary"
-            onclick="javascrip:searchTag()"
-          >
-            Search
-          </button>
+        <div class="row g-2 justify-content-md-center">
+          <div class="col-auto">
+            <input
+              class="form-control"
+              type="search"
+              placeholder="Search tchan.art"
+              id="search"
+            />
+          </div>
+          <div class="col-auto">
+            <button
+              class="btn btn-outline-secondary"
+              onclick="javascrip:searchTag()"
+            >
+              Search
+            </button>
+          </div>
+          <div class="col-auto">
+            <button
+              class="btn btn-outline-secondary"
+              onclick="javascrip:searchTag()"
+            >
+              <i class="bi bi-gear"></i>
+            </button>
+          </div>
         </div>
       </div>
     </nav>
