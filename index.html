@@ -90,11 +90,11 @@
           .then((data) => data.forEach(postCallback));
       }
 
-      function apiPostPost(host, parentPostId, tags, text) {
+      function apiPostPost(host, parentPostIds, tags, text) {
         fetch(`${host}/post`, {
           method: "POST",
           body: JSON.stringify({
-            ParentPostId: parentPostId,
+            ParentPostIds: parentPostIds,
             Tags: tags,
             Text: text,
           }),
@@ -103,6 +103,14 @@
 
       function parseTags(s) {
         const matches = s.match(/#[a-zA-Z0-9]+/gi);
+        if (matches) {
+          return matches.map((match) => match.substr(1));
+        }
+        return [];
+      }
+
+      function parsePostIds(s) {
+        const matches = s.match(/@[a-zA-Z0-9]+/gi);
         if (matches) {
           return matches.map((match) => match.substr(1));
         }
@@ -121,7 +129,12 @@
         event.preventDefault();
         const text = document.querySelector(COMMENT_ID).value;
         const params = getParams();
-        apiPostPost(params.host, params.postId, parseTags(text), text);
+        apiPostPost(
+          params.host,
+          [params.postId, ...parsePostIds(text)],
+          parseTags(text),
+          text
+        );
       }
 
       function searchTag(event) {
