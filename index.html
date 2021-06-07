@@ -248,14 +248,14 @@
         </form>
       </div>
     </nav>
-    <div class="container mb-3">
-      <form onsubmit="javascript:postComment(event)">
+    <div class="container">
+      <form onsubmit="javascript:postComment(event)" class="mt-4 mb-4">
         <textarea class="form-control mt-3 mb-2" id="comment"></textarea>
         <button class="btn btn-primary" type="submit">Post</button>
       </form>
       <div id="posts"></div>
     </div>
-    <div class="container mb-3">
+    <div class="container mt-4 mb-4">
       <form onsubmit="javascript:setHost(event)" class="input-group">
         <input class="form-control" type="text" placeholder="Host" id="host" />
         <button class="btn btn-primary" type="submit">Set host</button>
