@@ -108,6 +108,14 @@
         return [];
       }
 
+      function parseSingleTag(s) {
+        const tags = parseTags(s);
+        if (tags.length === 0) {
+          return "";
+        }
+        return tags[0];
+      }
+
       function postComment() {
         event.preventDefault();
         const text = document.querySelector(COMMENT_ID).value;
@@ -117,7 +125,7 @@
 
       function searchTag(event) {
         event.preventDefault();
-        const tag = document.querySelector(SEARCH_ID).value;
+        const tag = parseSingleTag(document.querySelector(SEARCH_ID).value);
         setTagParam(tag);
       }
 
@@ -194,7 +202,7 @@
       }
 
       function renderViewTag(host, tag) {
-        document.querySelector(SEARCH_ID).value = tag;
+        document.querySelector(SEARCH_ID).value = `#${tag}`;
 
         clearCards();
         apiGetTag(host, tag, renderCard);
