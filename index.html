@@ -135,7 +135,7 @@
         setHostParam(host);
       }
 
-      function renderCard(post) {
+      function renderCard(post, hideFooter = false) {
         const card = document.createElement("div");
         card.className = "card mt-3 mb-3";
 
@@ -158,7 +158,9 @@
         card.appendChild(body);
         body.appendChild(title);
         body.appendChild(text);
-        body.appendChild(link);
+        if (!hideFooter) {
+          body.appendChild(link);
+        }
 
         document.querySelector(POSTS_ID).appendChild(card);
       }
@@ -215,7 +217,7 @@
 
         clearCards();
         // TODO: Order
-        apiGetPost(host, postId, renderCard);
+        apiGetPost(host, postId, (post) => renderCard(post, true));
         apiGetReplies(host, postId, renderCard);
       }
 
