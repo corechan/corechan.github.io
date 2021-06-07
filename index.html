@@ -26,6 +26,7 @@
     <script>
       const DEFAULT_HOST = "https://tchan.art";
       const POSTS_ID = "#posts";
+      const PRIMARY_POSTS_ID = "#primary-posts";
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
       const HOST_ID = "#host";
@@ -166,7 +167,7 @@
 
         const text = document.createElement("p");
         if (isPrimary) {
-          text.className = "fs-4";
+          text.className = "fs-4 mb-2";
         }
         text.innerHTML = processText(post.Text);
 
@@ -182,7 +183,11 @@
           body.appendChild(link);
         }
 
-        document.querySelector(POSTS_ID).appendChild(card);
+        if (isPrimary) {
+          document.querySelector(PRIMARY_POSTS_ID).appendChild(card);
+        } else {
+          document.querySelector(POSTS_ID).appendChild(card);
+        }
       }
 
       function setSearchParam(o) {
@@ -234,8 +239,6 @@
         appendPostId(postId);
 
         clearCards();
-        // TODO: Order
-        console.log("render replies");
         apiGetPost(host, postId, (post) => renderCard(post, true));
         apiGetReplies(host, postId, (post) => renderCard(post, false));
       }
@@ -338,6 +341,7 @@
         ></textarea>
         <button class="btn btn-primary" type="submit">Post</button>
       </form>
+      <div id="primary-posts"></div>
       <div id="posts"></div>
     </div>
     <script
