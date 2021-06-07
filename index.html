@@ -216,6 +216,9 @@
         console.log(view, tag, postId, host);
 
         document.querySelector(HOST_ID).value = host;
+        document.querySelector(SEARCH_ID).placeholder = `Search ${
+          new URL(host).hostname
+        }`;
 
         if (view === VIEW.TAG) {
           renderViewTag(host, tag);
@@ -229,12 +232,7 @@
     <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
       <div class="container">
         <form onsubmit="javascript:searchTag(event)" class="input-group">
-          <input
-            class="form-control"
-            type="search"
-            placeholder="Search"
-            id="search"
-          />
+          <input class="form-control" type="search" id="search" />
           <button class="btn btn-outline-secondary" type="submit">
             Search
           </button>
