@@ -20,8 +20,8 @@
       }
     </style>
     <script>
-      const HOST = "https://tchan.art";
-      //const HOST = "http://localhost:443";
+      //const HOST = "https://tchan.art";
+      const HOST = "http://localhost:443";
       const POSTS_ID = "#posts";
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
@@ -105,12 +105,14 @@
       }
 
       function postComment() {
+        event.preventDefault();
         const text = document.querySelector(COMMENT_ID).value;
         const params = getParams();
         apiPostPost(params.postId, parseTags(text), text);
       }
 
-      function searchTag() {
+      function searchTag(event) {
+        event.preventDefault();
         const tag = document.querySelector(SEARCH_ID).value;
         setTagParam(tag);
       }
@@ -201,31 +203,22 @@
   <body>
     <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
       <div class="container">
-        <div class="row g-2 justify-content-md-center">
-          <div class="col-auto">
-            <input
-              class="form-control"
-              type="search"
-              placeholder="Search"
-              id="search"
-            />
-          </div>
-          <div class="col-auto">
-            <button
-              class="btn btn-outline-secondary"
-              onclick="javascript:searchTag()"
-            >
-              Search
-            </button>
-          </div>
-        </div>
+        <form onsubmit="javascript:searchTag(event)" class="input-group">
+          <input
+            class="form-control"
+            type="search"
+            placeholder="Search"
+            id="search"
+          />
+          <button class="btn btn-outline-secondary">Search</button>
+        </form>
       </div>
     </nav>
     <div class="container">
-      <textarea class="form-control mt-3 mb-2" id="comment"></textarea>
-      <button class="btn btn-primary" onclick="javascript:postComment()">
-        Post
-      </button>
+      <form onsubmit="javascript:postComment(event)">
+        <textarea class="form-control mt-3 mb-2" id="comment"></textarea>
+        <button class="btn btn-primary">Post</button>
+      </form>
       <div id="posts"></div>
     </div>
     <script
