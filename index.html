@@ -54,6 +54,18 @@
         return `${Math.floor(t)}d`;
       }
 
+      const MENTION_CLASSES = [
+        "badge bg-primary",
+        "badge bg-success",
+        "badge bg-danger",
+        "badge bg-warning text-dark",
+        "badge bg-info text-dark",
+      ];
+
+      function getMentionClass(s) {
+        return MENTION_CLASSES[parseInt(s, 32) % MENTION_CLASSES.length];
+      }
+
       /**
        * Add links to tags.
        */
@@ -63,7 +75,9 @@
             const tag = match.substr(1);
             return `<a href="javascript:setTagParam('${tag}')">${match}</a>`;
           }
-          return match;
+          const mention = match.substr(1);
+          const mentionClass = getMentionClass(mention);
+          return `<span class="${mentionClass}">${match}</span>`;
         });
       }
 
