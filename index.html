@@ -20,11 +20,11 @@
       }
     </style>
     <script>
-      //const HOST = "https://tchan.art";
-      const HOST = "http://localhost:443";
+      const DEFAULT_HOST = "https://tchan.art";
       const POSTS_ID = "#posts";
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
+      const HOST_ID = "#host";
       const DEFAULT_TAG = "home";
       const VIEW = {
         TAG: "tag",
@@ -67,26 +67,26 @@
         document.querySelector(POSTS_ID).innerHTML = "";
       }
 
-      function apiGetPost(postId, postCallback) {
-        fetch(`${HOST}/post/${postId}`)
+      function apiGetPost(host, postId, postCallback) {
+        fetch(`${host}/post/${postId}`)
           .then((response) => response.json())
           .then((data) => data.forEach(postCallback));
       }
 
-      function apiGetReplies(postId, postCallback) {
-        fetch(`${HOST}/replies/${postId}`)
+      function apiGetReplies(host, postId, postCallback) {
+        fetch(`${host}/replies/${postId}`)
           .then((response) => response.json())
           .then((data) => data.forEach(postCallback));
       }
 
-      function apiGetTag(tag, postCallback) {
-        fetch(`${HOST}/tag/${tag}`)
+      function apiGetTag(host, tag, postCallback) {
+        fetch(`${host}/tag/${tag}`)
           .then((response) => response.json())
           .then((data) => data.forEach(postCallback));
       }
 
-      function apiPostPost(parentPostId, tags, text) {
-        fetch(`${HOST}/post`, {
+      function apiPostPost(host, parentPostId, tags, text) {
+        fetch(`${host}/post`, {
           method: "POST",
           body: JSON.stringify({
             ParentPostId: parentPostId,
@@ -108,13 +108,19 @@
         event.preventDefault();
         const text = document.querySelector(COMMENT_ID).value;
         const params = getParams();
-        apiPostPost(params.postId, parseTags(text), text);
+        apiPostPost(params.host, params.postId, parseTags(text), text);
       }
 
       function searchTag(event) {
         event.preventDefault();
         const tag = document.querySelector(SEARCH_ID).value;
         setTagParam(tag);
+      }
+
+      function setHost(event) {
+        event.preventDefault();
+        const host = document.querySelector(HOST_ID).value;
+        setHostParam(host);
       }
 
       function renderCard(post) {
@@ -167,35 +173,48 @@
         });
       }
 
+      function setHostParam(host) {
+        setSearchParam({
+          host,
+        });
+      }
+
       function getParams() {
         const params = new URLSearchParams(window.location.search);
         return {
           view: params.get("view") || VIEW.TAG,
           tag: params.get("tag") || DEFAULT_TAG,
           postId: params.get("postId"),
+          host: params.get("host") || DEFAULT_HOST,
         };
       }
 
-      function renderViewTag(tag) {
+      function renderViewTag(host, tag) {
         document.querySelector(SEARCH_ID).value = tag;
 
         clearCards();
-        apiGetTag(tag, renderCard);
+        apiGetTag(host, tag, renderCard);
       }
 
-      function renderViewReplies(postId) {
+      function renderViewReplies(host, postId) {
+        document.querySelector(
+          COMMENT_ID
+        ).placeholder = `Replying to @${postId}`;
+
         clearCards();
-        apiGetReplies(postId, renderCard);
+        apiGetReplies(host, postId, renderCard);
       }
 
       window.onload = function () {
-        const { view, tag, postId } = getParams();
-        console.log(view, tag, postId);
+        const { view, tag, postId, host } = getParams();
+        console.log(view, tag, postId, host);
+
+        document.querySelector(HOST_ID).value = host;
 
         if (view === VIEW.TAG) {
-          renderViewTag(tag);
+          renderViewTag(host, tag);
         } else if (view === VIEW.REPLIES) {
-          renderViewReplies(postId);
+          renderViewReplies(host, postId);
         }
       };
     </script>
@@ -210,16 +229,26 @@
             placeholder="Search"
             id="search"
           />
-          <button class="btn btn-outline-secondary">Search</button>
+          <button class="btn btn-outline-secondary" type="submit">
+            Search
+          </button>
         </form>
       </div>
     </nav>
-    <div class="container">
+    <div class="container mb-3">
       <form onsubmit="javascript:postComment(event)">
         <textarea class="form-control mt-3 mb-2" id="comment"></textarea>
-        <button class="btn btn-primary">Post</button>
+        <button class="btn btn-primary" type="submit">Post</button>
       </form>
       <div id="posts"></div>
+    </div>
+    <div class="container mb-3">
+      <form onsubmit="javascript:setHost(event)" class="input-group">
+        <input class="form-control" type="text" placeholder="Host" id="host" />
+        <button class="btn btn-outline-secondary" type="submit">
+          Set host
+        </button>
+      </form>
     </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
