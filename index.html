@@ -63,8 +63,7 @@
             const tag = match.substr(1);
             return `<a href="javascript:setTagParam('${tag}')">${match}</a>`;
           }
-          const postId = match.substr(1);
-          return `<a href="javascript:setRepliesParam('${postId}')">${match}</a>`;
+          return match;
         });
       }
 
@@ -109,14 +108,6 @@
         return [];
       }
 
-      function parsePostIds(s) {
-        const matches = s.match(/@[a-zA-Z0-9]+/gi);
-        if (matches) {
-          return matches.map((match) => match.substr(1));
-        }
-        return [];
-      }
-
       function parseSingleTag(s) {
         const tags = parseTags(s);
         if (tags.length === 0) {
@@ -129,7 +120,7 @@
         event.preventDefault();
         const text = document.querySelector(COMMENT_ID).value;
         const params = getParams();
-        apiPostPost(params.host, parsePostIds(text), parseTags(text), text);
+        apiPostPost(params.host, [params.postId], parseTags(text), text);
       }
 
       function searchTag(event) {
@@ -144,11 +135,6 @@
         setHostParam(host);
       }
 
-      function appendPostId(postId) {
-        const comment = document.querySelector(COMMENT_ID);
-        comment.value = comment.value + `@${postId} `;
-      }
-
       function renderCard(post, isPrimary = false) {
         const card = document.createElement("div");
         card.className = "card mt-3 mb-3";
@@ -159,11 +145,7 @@
         const title = document.createElement("p");
         title.className = "card-title text-muted mb-3";
         // TODO: <time>
-        title.innerHTML = `@${
-          post.UserId
-        } &middot; <a href="javascript:appendPostId('${post.PostId}')">@${
-          post.PostId
-        }</a> &middot; ${humanize(post.Time)}`;
+        title.innerHTML = `@${post.UserId} &middot; ${humanize(post.Time)}`;
 
         const text = document.createElement("p");
         if (isPrimary) {
@@ -236,8 +218,6 @@
       }
 
       function renderViewReplies(host, postId) {
-        appendPostId(postId);
-
         clearCards();
         apiGetPost(host, postId, (post) => renderCard(post, true));
         apiGetReplies(host, postId, (post) => renderCard(post, false));
