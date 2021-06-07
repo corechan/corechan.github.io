@@ -161,9 +161,11 @@
         const title = document.createElement("p");
         title.className = "card-title text-muted mb-3";
         // TODO: <time>
-        title.innerHTML = `<a href="javascript:appendPostId('${
+        title.innerHTML = `@${
+          post.UserId
+        } &middot; <a href="javascript:appendPostId('${post.PostId}')">@${
           post.PostId
-        }')">@${post.PostId}</a> &middot; ${humanize(post.Time)}`;
+        }</a> &middot; ${humanize(post.Time)}`;
 
         const text = document.createElement("p");
         if (isPrimary) {
