@@ -74,7 +74,7 @@
       function apiGetPost(host, postId, postCallback) {
         fetch(`${host}/post/${postId}`)
           .then((response) => response.json())
-          .then((data) => data.forEach(postCallback));
+          .then(postCallback);
       }
 
       function apiGetReplies(host, postId, postCallback) {
@@ -206,6 +206,8 @@
         ).placeholder = `Replying to @${postId}`;
 
         clearCards();
+        // TODO: Order
+        apiGetPost(host, postId, renderCard);
         apiGetReplies(host, postId, renderCard);
       }
 
