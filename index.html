@@ -58,13 +58,14 @@
        * Add links to tags.
        */
       function processText(s) {
-        return s.replaceAll(
-          /[#@][a-zA-Z0-9]+/gi,
-          (match) =>
-            `<a href="javascript:setTagParam('${match.substr(
-              1
-            )}')">${match}</a>`
-        );
+        return s.replaceAll(/[#@][a-zA-Z0-9]+/gi, (match) => {
+          if (match.charAt(0) === "#") {
+            const tag = match.substr(1);
+            return `<a href="javascript:setTagParam('${tag}')">${match}</a>`;
+          }
+          const postId = match.substr(1);
+          return `<a href="javascript:setRepliesParam('${postId}')">${match}</a>`;
+        });
       }
 
       function clearCards() {
