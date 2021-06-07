@@ -149,7 +149,7 @@
         setHostParam(host);
       }
 
-      function renderCard(post) {
+      function renderCard(post, isPrimary = false) {
         const card = document.createElement("div");
         card.className = "card mt-3 mb-3";
 
@@ -162,6 +162,9 @@
         title.innerHTML = `@${post.PostId} &middot; ${humanize(post.Time)}`;
 
         const text = document.createElement("p");
+        if (isPrimary) {
+          text.className = "fs-4";
+        }
         text.innerHTML = processText(post.Text);
 
         const link = document.createElement("a");
@@ -172,7 +175,9 @@
         card.appendChild(body);
         body.appendChild(title);
         body.appendChild(text);
-        body.appendChild(link);
+        if (!isPrimary) {
+          body.appendChild(link);
+        }
 
         document.querySelector(POSTS_ID).appendChild(card);
       }
@@ -219,7 +224,7 @@
         document.querySelector(SEARCH_ID).value = `#${tag}`;
 
         clearCards();
-        apiGetTag(host, tag, renderCard);
+        apiGetTag(host, tag, (post) => renderCard(post, false));
       }
 
       function renderViewReplies(host, postId) {
@@ -229,8 +234,9 @@
 
         clearCards();
         // TODO: Order
-        apiGetPost(host, postId, renderCard);
-        apiGetReplies(host, postId, renderCard);
+        console.log("render replies");
+        apiGetPost(host, postId, (post) => renderCard(post, true));
+        apiGetReplies(host, postId, (post) => renderCard(post, false));
       }
 
       window.onload = function () {
