@@ -29,6 +29,7 @@
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
       const HOST_ID = "#host";
+      const BRAND_ID = "#brand";
       const DEFAULT_TAG = "home";
       const VIEW = {
         TAG: "tag",
@@ -246,8 +247,11 @@
         const prettyHost = new URL(host).hostname;
 
         document.querySelector(HOST_ID).value = host;
-        document.querySelector(SEARCH_ID).placeholder = `Search ${prettyHost}`;
         document.title = prettyHost;
+
+        const brand = document.querySelector(BRAND_ID);
+        brand.href = `index.html?host=${encodeURIComponent(host)}`;
+        brand.innerHTML = prettyHost;
 
         if (view === VIEW.TAG) {
           renderViewTag(host, tag);
@@ -303,8 +307,14 @@
 
     <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
       <div class="container">
-        <form onsubmit="javascript:searchTag(event)" class="input-group me-2">
-          <input class="form-control" type="search" id="search" />
+        <a class="navbar-brand" id="brand"></a>
+        <form onsubmit="javascript:searchTag(event)" class="input-group me-3">
+          <input
+            class="form-control"
+            type="search"
+            id="search"
+            placeholder="Search"
+          />
           <button class="btn btn-primary" type="submit">
             <i class="bi bi-search"></i>
           </button>
