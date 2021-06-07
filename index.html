@@ -20,12 +20,17 @@
       }
     </style>
     <script>
-      const HOST = "https://tchan.art";
+      //const HOST = "https://tchan.art";
+      const HOST = "http://localhost:443";
       const POSTS_ID = "#posts";
       const SEARCH_ID = "#search";
       const COMMENT_ID = "#comment";
       const POST_TAG_LENGTH = 32;
-      let TAG = "";
+      const DEFAULT_TAG = "home";
+      const VIEW = {
+        TAG: "tag",
+        REPLIES: "replies",
+      };
 
       function humanize(s) {
         const date = Date.parse(s);
@@ -76,24 +81,57 @@
         document.querySelector(POSTS_ID).innerHTML = "";
       }
 
-      function postComment(postParentTag) {
-        const text = document.querySelector(COMMENT_ID).value;
-        console.log("postComment", text);
+      function apiGetPost(postId, postCallback) {
+        fetch(`${HOST}/post/${postId}`)
+          .then((response) => response.json())
+          .then((data) => data.forEach(postCallback));
+      }
 
-        fetch(HOST, {
+      function apiGetReplies(postId, postCallback) {
+        fetch(`${HOST}/replies/${postId}`)
+          .then((response) => response.json())
+          .then((data) => data.forEach(postCallback));
+      }
+
+      function apiGetTag(tag, postCallback) {
+        fetch(`${HOST}/tag/${tag}`)
+          .then((response) => response.json())
+          .then((data) => data.forEach(postCallback));
+      }
+
+      function apiPostPost(parentPostId, tags, text) {
+        fetch(`${HOST}/post`, {
           method: "POST",
           body: JSON.stringify({
-            ParentPostTag: "",
-            SearchTags: [getCurrentTag()],
+            ParentPostId: parentPostId,
+            Tags: tags,
             Text: text,
           }),
         }).then((response) => window.location.reload());
       }
 
+      function parseTags(s) {
+        const matches = s.match(/#[a-zA-Z0-9]+/gi);
+        if (matches) {
+          return matches.map((match) => match.substr(1));
+        }
+        return [];
+      }
+
+      function postComment() {
+        const text = document.querySelector(COMMENT_ID).value;
+        const params = getParams();
+        console.log("postComment", text, params);
+
+        // TODO: Fix tags
+        apiPostPost(params.postId, parseTags(text), text);
+      }
+
       function searchTag() {
         const tag = document.querySelector(SEARCH_ID).value;
         console.log("searchTag", tag);
-        updateTagChildren(tag);
+        setTagParam(tag);
+        //updateTagChildren(tag);
       }
 
       function renderCard(post) {
@@ -106,13 +144,13 @@
         const title = document.createElement("p");
         title.className = "card-title text-muted mb-3";
         // TODO: <time>
-        title.innerHTML = `@${post.PostTag} &middot; ${humanize(post.Time)}`;
+        title.innerHTML = `@${post.PostId} &middot; ${humanize(post.Time)}`;
 
         const text = document.createElement("p");
         text.innerHTML = processText(post.Text);
 
         const link = document.createElement("a");
-        link.href = `javascript:setTagParam('${post.PostTag}')`;
+        link.href = `javascript:setRepliesParam('${post.PostId}')`;
         link.className = "card-link";
         link.innerHTML = `<i class="bi bi-chat me-2"></i>${post.ReplyCount}`;
 
@@ -124,14 +162,26 @@
         document.querySelector(POSTS_ID).appendChild(card);
       }
 
-      function setSearchParam(k, v) {
+      function setSearchParam(o) {
         const params = new URLSearchParams(window.location.search);
-        params.set(k, v);
+        for (const [k, v] of Object.entries(o)) {
+          params.set(k, v);
+        }
         window.location.search = params;
       }
 
       function setTagParam(tag) {
-        setSearchParam("tag", tag);
+        setSearchParam({
+          view: VIEW.TAG,
+          tag,
+        });
+      }
+
+      function setRepliesParam(postId) {
+        setSearchParam({
+          view: VIEW.REPLIES,
+          postId,
+        });
       }
 
       function updateTagChildren(tag) {
@@ -147,9 +197,13 @@
           .then((data) => data.forEach(renderCard));
       }
 
-      function getCurrentTag() {
+      function getParams() {
         const params = new URLSearchParams(window.location.search);
-        return params.get("tag") || "home";
+        return {
+          view: params.get("view") || VIEW.TAG,
+          tag: params.get("tag") || DEFAULT_TAG,
+          postId: params.get("postId"),
+        };
       }
 
       /*
@@ -161,14 +215,34 @@
 
 
       render:
-      1. get tag
+      1. get params
+      2. render
 
       */
 
+      function renderViewTag(tag) {
+        //document.querySelector(SEARCH_ID).value = tag;
+
+        clearCards();
+        apiGetTag(tag, renderCard);
+      }
+
+      function renderViewReplies(postId) {
+        clearCards();
+        apiGetReplies(postId, renderCard);
+      }
+
       window.onload = function () {
-        console.log("onload");
-        const tag = getCurrentTag();
-        updateTagChildren(tag);
+        const { view, tag, postId } = getParams();
+        console.log(view, tag, postId);
+
+        if (view === VIEW.TAG) {
+          renderViewTag(tag);
+        } else if (view === VIEW.REPLIES) {
+          renderViewReplies(postId);
+        }
+
+        //updateTagChildren(tag);
       };
     </script>
   </head>
@@ -187,7 +261,7 @@
           <div class="col-auto">
             <button
               class="btn btn-outline-secondary"
-              onclick="javascrip:searchTag()"
+              onclick="javascript:searchTag()"
             >
               Search
             </button>
