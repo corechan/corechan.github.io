@@ -74,7 +74,7 @@
       }
 
       function apiGetPost(host, postId, postCallback) {
-        fetch(`${host}/post/${postId}`)
+        return fetch(`${host}/post/${postId}`)
           .then((response) => response.json())
           .then(postCallback);
       }
@@ -234,10 +234,9 @@
         appendPostId(postId);
 
         clearCards();
-        // TODO: Order
-        console.log("render replies");
-        apiGetPost(host, postId, (post) => renderCard(post, true));
-        apiGetReplies(host, postId, (post) => renderCard(post, false));
+        apiGetPost(host, postId, (post) => renderCard(post, true)).then(() =>
+          apiGetReplies(host, postId, (post) => renderCard(post, false))
+        );
       }
 
       window.onload = function () {
