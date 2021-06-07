@@ -129,12 +129,7 @@
         event.preventDefault();
         const text = document.querySelector(COMMENT_ID).value;
         const params = getParams();
-        apiPostPost(
-          params.host,
-          [params.postId, ...parsePostIds(text)],
-          parseTags(text),
-          text
-        );
+        apiPostPost(params.host, parsePostIds(text), parseTags(text), text);
       }
 
       function searchTag(event) {
@@ -149,6 +144,11 @@
         setHostParam(host);
       }
 
+      function appendPostId(postId) {
+        const comment = document.querySelector(COMMENT_ID);
+        comment.value = comment.value + `@${postId} `;
+      }
+
       function renderCard(post, isPrimary = false) {
         const card = document.createElement("div");
         card.className = "card mt-3 mb-3";
@@ -159,7 +159,9 @@
         const title = document.createElement("p");
         title.className = "card-title text-muted mb-3";
         // TODO: <time>
-        title.innerHTML = `@${post.PostId} &middot; ${humanize(post.Time)}`;
+        title.innerHTML = `<a href="javascript:appendPostId('${
+          post.PostId
+        }')">@${post.PostId}</a> &middot; ${humanize(post.Time)}`;
 
         const text = document.createElement("p");
         if (isPrimary) {
@@ -228,9 +230,7 @@
       }
 
       function renderViewReplies(host, postId) {
-        document.querySelector(
-          COMMENT_ID
-        ).placeholder = `Replying to @${postId}`;
+        appendPostId(postId);
 
         clearCards();
         // TODO: Order
