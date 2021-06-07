@@ -243,10 +243,11 @@
         const { view, tag, postId, host } = getParams();
         console.log(view, tag, postId, host);
 
+        const prettyHost = new URL(host).hostname;
+
         document.querySelector(HOST_ID).value = host;
-        document.querySelector(SEARCH_ID).placeholder = `Search ${
-          new URL(host).hostname
-        }`;
+        document.querySelector(SEARCH_ID).placeholder = `Search ${prettyHost}`;
+        document.title = prettyHost;
 
         if (view === VIEW.TAG) {
           renderViewTag(host, tag);
