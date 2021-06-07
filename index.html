@@ -66,6 +66,16 @@
         return MENTION_CLASSES[parseInt(s, 32) % MENTION_CLASSES.length];
       }
 
+      function appendMention(userId) {
+        const comment = document.querySelector(COMMENT_ID);
+        comment.value = comment.value + `@${userId} `;
+      }
+
+      function getMentionHtml(userId) {
+        const mentionClass = getMentionClass(userId);
+        return `<a href="javascript:appendMention('${userId}')"><span class="${mentionClass}">@${userId}</span></a>`;
+      }
+
       /**
        * Add links to tags.
        */
@@ -76,8 +86,7 @@
             return `<a href="javascript:setTagParam('${tag}')">${match}</a>`;
           }
           const mention = match.substr(1);
-          const mentionClass = getMentionClass(mention);
-          return `<span class="${mentionClass}">${match}</span>`;
+          return getMentionHtml(mention);
         });
       }
 
@@ -159,7 +168,9 @@
         const title = document.createElement("p");
         title.className = "card-title text-muted mb-3";
         // TODO: <time>
-        title.innerHTML = `@${post.UserId} &middot; ${humanize(post.Time)}`;
+        title.innerHTML = `${getMentionHtml(post.UserId)} &middot; ${humanize(
+          post.Time
+        )}`;
 
         const text = document.createElement("p");
         if (isPrimary) {
