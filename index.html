@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -257,34 +257,47 @@
       };
     </script>
   </head>
-  <body>
-    <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
+  <body class="d-flex flex-column h-100">
+    <header>
+      <nav class="navbar navbar-expand sticky-top navbar-light bg-light">
+        <div class="container">
+          <form onsubmit="javascript:searchTag(event)" class="input-group">
+            <input class="form-control" type="search" id="search" />
+            <button class="btn btn-primary" type="submit">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+        </div>
+      </nav>
+    </header>
+    <main class="flex-shrink-0 mt-2">
       <div class="container">
-        <form onsubmit="javascript:searchTag(event)" class="input-group">
-          <input class="form-control" type="search" id="search" />
-          <button class="btn btn-primary" type="submit">
-            <i class="bi bi-search"></i>
-          </button>
+        <div id="posts"></div>
+      </div>
+      <div class="container mt-4 mb-4">
+        <form onsubmit="javascript:setHost(event)" class="input-group">
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Host"
+            id="host"
+          />
+          <button class="btn btn-primary" type="submit">Set host</button>
         </form>
       </div>
-    </nav>
-    <div class="container">
-      <form onsubmit="javascript:postComment(event)" class="mt-4 mb-4">
-        <textarea
-          class="form-control mt-3 mb-2"
-          id="comment"
-          placeholder="What are your thoughts?"
-        ></textarea>
-        <button class="btn btn-primary" type="submit">Post</button>
-      </form>
-      <div id="posts"></div>
-    </div>
-    <div class="container mt-4 mb-4">
-      <form onsubmit="javascript:setHost(event)" class="input-group">
-        <input class="form-control" type="text" placeholder="Host" id="host" />
-        <button class="btn btn-primary" type="submit">Set host</button>
-      </form>
-    </div>
+    </main>
+    <footer class="footer bg-light py-2 mt-auto">
+      <div class="container">
+        <form onsubmit="javascript:postComment(event)">
+          <textarea
+            class="form-control mb-2"
+            id="comment"
+            placeholder="What are your thoughts?"
+          ></textarea>
+          <button class="btn btn-primary" type="submit">Post</button>
+        </form>
+      </div>
+    </footer>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
