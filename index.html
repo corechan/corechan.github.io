@@ -29,6 +29,7 @@
       const COMMENT_ID = "#comment";
       const HOST_ID = "#host";
       const BRAND_ID = "#brand";
+      const USER_ID = "#user";
       const DEFAULT_TAG = "home";
       const VIEW = {
         TAG: "tag",
@@ -99,6 +100,12 @@
 
       function clearCards() {
         document.querySelector(POSTS_ID).innerHTML = "";
+      }
+
+      function apiGetUser(host, callback) {
+        fetch(`${host}/user`)
+          .then((response) => response.json())
+          .then(callback);
       }
 
       function apiGetPost(host, postId, postCallback) {
@@ -261,6 +268,14 @@
 
         const prettyHost = new URL(host).hostname;
 
+        apiGetUser(host, (user) => {
+          document.querySelector(
+            USER_ID
+          ).innerHTML = `Your anonymous ID is ${getMentionHtml(
+            user.UserId
+          )} and changes daily.`;
+        });
+
         document.querySelector(HOST_ID).value = host;
         document.title = prettyHost;
 
@@ -352,6 +367,7 @@
         >
         backend. Corechan is an anonymous discussion board designed to be
         lightweight and easy to set up.
+        <div class="mt-2" id="user"></div>
       </div>
     </div>
     <div class="container mb-4">
