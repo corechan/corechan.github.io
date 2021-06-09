@@ -61,8 +61,16 @@
         "badge bg-info text-dark",
       ];
 
+      function stringToInt(s) {
+        let x = 0;
+        for (const c of s) {
+          x += c.charCodeAt();
+        }
+        return x;
+      }
+
       function getMentionClass(s) {
-        return MENTION_CLASSES[parseInt(s, 32) % MENTION_CLASSES.length];
+        return MENTION_CLASSES[stringToInt(s) % MENTION_CLASSES.length];
       }
 
       function appendMention(userId) {
